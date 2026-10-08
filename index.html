@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutri BakeShop - Sales Reports</title>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f1f8f4;
+    color:#333;
+    min-height:100vh;
+}
+
+[hidden]{
+    display:none!important;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:#198754;
+    color:#fff;
+    padding:18px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.header h1{
+    font-size:24px;
+}
+
+.header-actions{
+    display:flex;
+    gap:12px;
+}
+
+.header-btn{
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.back-btn{
+    background:#fff;
+    color:#198754;
+}
+
+.logout-btn{
+    background:#dc3545;
+    color:#fff;
+}
+
+/* ================= MAIN LAYOUT ================= */
+
+.layout{
+    display:flex;
+    gap:20px;
+    padding:25px;
+    align-items:flex-start;
+}
+
+.sidebar{
+    width:210px;
+    flex-shrink:0;
+    background:#fff;
+    border-radius:10px;
+    padding:20px 15px;
+    box-shadow:0 3px 10px rgba(0,0,0,.10);
+    position:sticky;
+    top:20px;
+}
+
+.sidebar-title{
+    font-size:12px;
+    color:#777;
+    font-weight:bold;
+    margin:0 10px 12px;
+    text-transform:uppercase;
+}
+
+.nav-link{
+    display:block;
+    padding:12px 14px;
+    margin-bottom:5px;
+    text-decoration:none;
+    color:#444;
+    border-radius:7px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.nav-link:hover{
+    background:#e8f5ee;
+    color:#198754;
+}
+
+.nav-link.active{
+    background:#d9f2e3;
+    color:#198754;
+}
+
+/* ================= CONTENT ================= */
+
+.main{
+    flex:1;
+    min-width:0;
+}
+
+.page-header{
+    margin-bottom:20px;
+}
+
+.page-header h1{
+    font-size:28px;
+    color:#198754;
+    margin-bottom:6px;
+}
+
+.page-header p{
+    color:#666;
+    font-size:14px;
+}
+
+/* ================= CARDS ================= */
+
+.card{
+    background:#fff;
+    padding:22px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,.10);
+}
+
+.card h2{
+    font-size:18px;
+    color:#198754;
+    margin-bottom:18px;
+}
+
+.card h3{
+    font-size:16px;
+    color:#198754;
+    margin-bottom:12px;
+}
+
+/* ================= REPORT CONTROLS ================= */
+
+.controls{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:15px;
+    align-items:end;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:7px;
+    color:#444;
+}
+
+.form-group select,
+.form-group input{
+    padding:11px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    outline:none;
+    font-size:14px;
+    background:#fff;
+}
+
+.form-group select:focus,
+.form-group input:focus{
+    border-color:#198754;
+}
+
+/* ================= BUTTON ================= */
+
+.btn{
+    border:none;
+    padding:11px 20px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.btn-primary{
+    background:#198754;
+    color:#fff;
+}
+
+.btn-primary:hover{
+    background:#157347;
+}
+
+/* ================= MESSAGE ================= */
+
+.message{
+    display:none;
+    padding:12px 15px;
+    border-radius:6px;
+    margin-top:15px;
+    font-size:14px;
+}
+
+.message.error{
+    display:block;
+    background:#f8d7da;
+    color:#842029;
+}
+
+/* ================= SUMMARY ================= */
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.summary-card{
+    background:#fff;
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.10);
+    border:1px solid #e8eee9;
+}
+
+.summary-card span{
+    display:block;
+    font-size:13px;
+    color:#666;
+    margin-bottom:8px;
+}
+
+.summary-card strong{
+    display:block;
+    font-size:24px;
+    color:#198754;
+}
+
+.summary-card small{
+    display:block;
+    margin-top:7px;
+    color:#888;
+    font-size:12px;
+}
+
+/* ================= REPORT PERIOD ================= */
+
+.report-period{
+    font-size:13px;
+    color:#666;
+    margin:-8px 0 15px;
+}
+
+.report-note{
+    background:#f8f9fa;
+    border:1px solid #e2e5e8;
+    border-radius:7px;
+    padding:13px;
+    margin-bottom:18px;
+    font-size:13px;
+    color:#666;
+    line-height:1.5;
+}
+
+.operations-groups{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+}
+
+.operations-group{
+    border:1px solid #e2e5e8;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+.operations-group h3{
+    margin:0;
+    padding:12px 14px;
+    background:#f1f8f4;
+    color:#146c43;
+    font-size:14px;
+}
+
+.operation-row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:11px 14px;
+    border-top:1px solid #eee;
+    font-size:13px;
+}
+
+.operation-label{
+    color:#666;
+}
+
+.operation-value{
+    color:#198754;
+    font-weight:bold;
+    text-align:right;
+}
+.assessment{
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:16px;
+}
+.assessment-lead,
+.assessment-actions{
+    border-left:4px solid #198754;
+    background:#f8f9fa;
+    padding:16px;
+    border-radius:7px;
+}
+.assessment-lead{
+    font-size:17px;
+    font-weight:bold;
+    line-height:1.45;
+    color:#146c43;
+    white-space:pre-line;
+}
+.assessment-actions{
+    border-left-color:#f0ad4e;
+    color:#555;
+    font-size:14px;
+    line-height:1.5;
+}
+.assessment-actions strong{
+    display:block;
+    color:#664d03;
+    margin-bottom:5px;
+}
+
+@media(max-width:1100px){
+    .operations-groups{
+        grid-template-columns:1fr;
+    }
+}
+
+/* ================= REPORT GRID ================= */
+
+.report-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+/* ================= TOP PRODUCT ================= */
+
+.top-product{
+    background:#f8f9fa;
+    border:1px solid #e2e5e8;
+    border-radius:8px;
+    padding:18px;
+}
+
+.top-product-label{
+    font-size:12px;
+    color:#777;
+    margin-bottom:5px;
+}
+
+.top-product-name{
+    font-size:21px;
+    font-weight:bold;
+    color:#198754;
+}
+
+.top-product-value{
+    margin-top:5px;
+    font-size:13px;
+    color:#555;
+}
+
+/* ================= TABLES ================= */
+
+.table-container{
+    overflow-x:auto;
+    margin-bottom:15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+}
+
+th{
+    background:#f8f9fa;
+    text-align:left;
+    padding:12px;
+    font-size:13px;
+    color:#666;
+    border-bottom:1px solid #ddd;
+    white-space:nowrap;
+}
+
+td{
+    padding:13px 12px;
+    border-bottom:1px solid #eee;
+    font-size:14px;
+}
+
+tbody tr:hover{
+    background:#f8fbf9;
+}
+
+.empty-message{
+    text-align:center;
+    padding:30px;
+    color:#999;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1100px){
+    .summary{
+        grid-template-columns:repeat(2,1fr);
+    }
+    .assessment{
+        grid-template-columns:1fr;
+    }
+
+    .report-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:1000px){
+    .layout{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+        position:static;
+    }
+}
+
+@media(max-width:900px){
+    .controls{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:700px){
+    .layout{
+        padding:15px;
+    }
+
+    .header{
+        padding:15px 20px;
+    }
+
+    .header h1{
+        font-size:20px;
+    }
+
+    .summary{
+        grid-template-columns:1fr;
+    }
+
+    .header-actions{
+        gap:6px;
+    }
+
+    .header-btn{
+        padding:9px 12px;
+    }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <h1>Nutri BakeShop - Sales Reports</h1>
+
+    <div class="header-actions">
+        <button class="header-btn back-btn" onclick="goToPOS()">Back to POS</button>
+        <button class="header-btn logout-btn" onclick="logout()">Logout</button>
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">Modules</div>
+
+        <a href="dashboard.html" class="nav-link">
+            Dashboard
+        </a>
+
+        <a href="pos.html" class="nav-link">
+            POS
+        </a>
+
+        <a href="reservation.html" class="nav-link">
+            Reservation
+        </a>
+
+        
+
+        <a href="inventory.html" class="nav-link">
+            Inventory
+        </a>
+
+        <a href="salesReports.html" class="nav-link active">
+            Reports
+        </a>
+
+        <a href="transaction.html" class="nav-link">
+            Transaction
+        </a>
+
+    </aside>
+
+    <main class="main">
+
+        <!-- KEEP EVERYTHING FROM YOUR CURRENT
+             .page-header DOWN TO THE END OF YOUR MAIN
+             EXACTLY AS IT IS -->
+
+
+
+<main class="main">
+    <div class="page-header">
+        <h1>Sales Reports</h1>
+        <p>Analyze sales performance, payment methods, channels, and product performance by reporting period.</p>
+    </div>
+
+    <section class="card">
+        <h2>Generate Sales Report</h2>
+        <div class="controls">
+            <div class="form-group">
+                <label for="report-type">Report Period</label>
+                <select id="report-type" onchange="changeReportInput()">
+                    <option value="daily">Daily</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+
+            <!-- Only one of these three is visible at a time (hidden attribute) -->
+            <div class="form-group" id="group-daily">
+                <label for="report-date">Select Date</label>
+                <input type="date" id="report-date">
+            </div>
+            <div class="form-group" id="group-monthly" hidden>
+                <label for="report-month">Select Month</label>
+                <input type="month" id="report-month">
+            </div>
+            <div class="form-group" id="group-yearly" hidden>
+                <label for="report-year">Select Year</label>
+                <select id="report-year"></select>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateSalesReport()">Generate Report</button>
+        </div>
+        <div id="message" class="message"></div>
+    </section>
+    <section class="card">
+        <h2>Management Summary</h2>
+        <div class="assessment">
+            <div class="assessment-lead" id="assessment-lead">Generate a report to see the business assessment.</div>
+            <div class="assessment-actions">
+                <strong>Recommended Actions</strong>
+                <span id="assessment-actions">Generate a report to receive recommendations.</span>
+            </div>
+        </div>
+    </section>
+    <section class="summary">
+        <div class="summary-card"><span>Total Sales</span><strong id="total-sales">₱0.00</strong><small>Completed transactions</small></div>
+        <div class="summary-card"><span>Transactions</span><strong id="transaction-count">0</strong><small>Completed orders</small></div>
+        <div class="summary-card"><span>Quantity Sold</span><strong id="quantity-sold">0</strong><small>Total items sold</small></div>
+        <div class="summary-card"><span>Average Transaction</span><strong id="average-sale">₱0.00</strong><small>Sales per transaction</small></div>
+    </section>
+
+    <section class="card">
+        <h2>Operations Snapshot</h2>
+        <div class="report-period" id="operations-period">No report generated.</div>
+        <div class="operations-groups">
+            <div class="operations-group">
+                <h3>Order Status</h3>
+                <div class="operation-row"><span class="operation-label">Completed</span><strong class="operation-value" id="status-completed">0</strong></div>
+                <div class="operation-row"><span class="operation-label">Pending (excluded)</span><strong class="operation-value" id="status-pending">0</strong></div>
+                <div class="operation-row"><span class="operation-label">Voided</span><strong class="operation-value" id="status-void">0</strong></div>
+                <div class="operation-row"><span class="operation-label">Completion Rate</span><strong class="operation-value" id="completion-rate">0.0%</strong></div>
+            </div>
+            <div class="operations-group">
+                <h3>Revenue &amp; Payments</h3>
+                <div class="operation-row"><span class="operation-label">Completed Reservations</span><strong class="operation-value" id="reservation-count">0</strong></div>
+                <div class="operation-row"><span class="operation-label">Reservation Sales</span><strong class="operation-value" id="reservation-sales">₱0.00</strong></div>
+                <div class="operation-row"><span class="operation-label">Fully Paid Orders</span><strong class="operation-value" id="paid-count">0</strong></div>
+                <div class="operation-row"><span class="operation-label">Orders With Balance</span><strong class="operation-value" id="balance-count">0</strong></div>
+            </div>
+            <div class="operations-group">
+                <h3>Demand &amp; Trend</h3>
+                <div class="operation-row"><span class="operation-label">Peak Sales Period</span><strong class="operation-value" id="peak-period">No data</strong></div>
+                <div class="operation-row"><span class="operation-label">Compared With Previous</span><strong class="operation-value" id="period-change">No data</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Sales Overview</h2>
+        <div class="report-period" id="report-period">No report generated.</div>
+
+        <div class="report-note" id="excluded-note" hidden></div>
+
+        <div class="report-grid">
+            <div>
+                <h3>Top-Selling Product</h3>
+                <div class="top-product">
+                    <div class="top-product-label">Top Product by Quantity</div>
+                    <div class="top-product-name" id="top-product-name">No data</div>
+                    <div class="top-product-value" id="top-product-value">No sales data available.</div>
+                </div>
+            </div>
+            <div>
+                <h3>Product Ranking</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Rank</th><th>Product</th><th>Quantity</th><th>Sales</th></tr></thead>
+                        <tbody id="product-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Sales Breakdown</h2>
+        <div class="report-period" id="breakdown-period">No report generated.</div>
+        <div class="report-grid">
+            <div>
+                <h3>By Payment Method</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Method</th><th>Transactions</th><th>Sales</th><th>Share</th></tr></thead>
+                        <tbody id="method-table"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <h3>By Channel</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Channel</th><th>Transactions</th><th>Sales</th><th>Share</th></tr></thead>
+                        <tbody id="channel-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Transaction Details</h2>
+        <div class="report-period" id="transaction-period">No report generated.</div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th><th>Order ID</th><th>Channel</th><th>Customer</th><th>Product</th>
+                        <th>Qty</th><th>Total</th><th>Method</th><th>Completed</th>
+                    </tr>
+                </thead>
+                <tbody id="report-table"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script>
+/* =====================================================
+   SHARED SIMULATED TRANSACTION DATA (no database yet)
+   Loaded by both the Transactions page and the Sales Report page.
+
+   DATA STRUCTURE: ARRAY ONLY
+   - "transactions" is one array; every record is also an array.
+   - Fields are read by the index constants below.
+   - Replace this file with the database layer later.
+===================================================== */
+
+const transactions = [];
+
+/* Field positions inside one record (array) */
+const F_TRX = 0, F_ORDER = 1, F_RES = 2, F_TYPE = 3, F_CUST = 4, F_PROD = 5,
+      F_QTY = 6, F_PRICE = 7, F_TOTAL = 8, F_PAY = 9, F_CHANGE = 10,
+      F_DATE = 11, F_TIME = 12, F_STATUS = 13, F_METHOD = 14, F_DONE = 15;
+
+/* Record layout:
+   [trxId, orderId, reservationId, type, customer, product, qty, price, total,
+    payment, change, pickupDate, createdTime, status, method, completedTime]
+   completedTime is "" until the transaction is completed. */
+
+transactions[transactions.length] = ["TRX-001", "ONS-001", "", "onsite", "Rosa Villanueva", "Brownies", 3, 250, 750, 750, 0, "", "2025-11-14 10:05", "completed", "cash", "2025-11-14 10:05"];
+transactions[transactions.length] = ["TRX-002", "ONL-001", "", "online", "Carlo Mendoza", "Taisan Ube Cake", 1, 190, 190, 190, 0, "", "2025-12-03 14:20", "completed", "e-wallet", "2025-12-03 14:20"];
+transactions[transactions.length] = ["TRX-003", "ONS-RSV-001", "RES-003", "onsite", "Elena Cruz", "Crema de Fruta", 1, 900, 900, 900, 0, "2025-12-24", "2025-12-10 09:00", "completed", "cash", "2025-12-24 15:30"];
+transactions[transactions.length] = ["TRX-004", "ONS-002", "", "onsite", "Ramon Aquino", "Crinkles", 12, 20, 240, 250, 10, "", "2026-01-15 11:30", "completed", "cash", "2026-01-15 11:30"];
+transactions[transactions.length] = ["TRX-005", "ONL-002", "", "online", "Bea Navarro", "Carrot Bars", 2, 250, 500, 500, 0, "", "2026-02-14 16:10", "completed", "e-wallet", "2026-02-14 16:10"];
+transactions[transactions.length] = ["TRX-006", "ONS-003", "", "onsite", "Jose Ramos", "Toasted Mamon", 6, 75, 450, 450, 0, "", "2026-03-08 08:45", "completed", "cash", "2026-03-08 08:45"];
+transactions[transactions.length] = ["TRX-007", "ONL-RSV-001", "RES-007", "online", "Liza Flores", "Taisan Classic Cake", 2, 170, 340, 340, 0, "2026-04-05", "2026-03-30 13:00", "completed", "e-wallet", "2026-04-05 10:15"];
+transactions[transactions.length] = ["TRX-008", "ONS-004", "", "onsite", "Kevin Torres", "Brownies", 4, 250, 1000, 1000, 0, "", "2026-05-08 10:15", "completed", "cash", "2026-05-08 10:15"];
+transactions[transactions.length] = ["TRX-009", "ONS-005", "", "onsite", "Nina Lopez", "Crinkles", 25, 20, 500, 500, 0, "", "2026-05-12 13:20", "completed", "cash", "2026-05-12 13:20"];
+transactions[transactions.length] = ["TRX-010", "ONL-003", "", "online", "Patricia Reyes", "Taisan Mocha Cake", 3, 190, 570, 570, 0, "", "2026-05-20 15:40", "completed", "e-wallet", "2026-05-20 15:40"];
+transactions[transactions.length] = ["TRX-011", "ONS-RSV-002", "RES-011", "onsite", "Michael Santos", "Crema de Fruta", 2, 900, 1800, 1800, 0, "2026-06-14", "2026-06-10 10:30", "completed", "cash", "2026-06-14 09:50"];
+transactions[transactions.length] = ["TRX-012", "ONL-004", "", "online", "Angela Reyes", "Taisan Ube Cake", 2, 190, 380, 380, 0, "", "2026-06-20 16:15", "completed", "e-wallet", "2026-06-20 16:15"];
+transactions[transactions.length] = ["TRX-013", "ONS-006", "", "onsite", "Robert Garcia", "Carrot Bars", 3, 250, 750, 750, 0, "", "2026-07-12 09:45", "completed", "cash", "2026-07-12 09:45"];
+transactions[transactions.length] = ["TRX-014", "ONS-007", "", "onsite", "Claire Mendoza", "Crinkles", 15, 20, 300, 300, 0, "", "2026-07-15 12:20", "completed", "cash", "2026-07-15 12:20"];
+transactions[transactions.length] = ["TRX-015", "ONL-005", "", "online", "Daniel Ramos", "Taisan Classic Cake", 1, 170, 170, 170, 0, "", "2026-07-18 14:00", "completed", "e-wallet", "2026-07-18 14:00"];
+transactions[transactions.length] = ["TRX-016", "ONS-008", "", "onsite", "Sofia Cruz", "Brownies", 2, 250, 500, 500, 0, "", "2026-08-15 10:00", "completed", "cash", "2026-08-15 10:00"];
+transactions[transactions.length] = ["TRX-017", "ONL-006", "", "online", "Paolo Bautista", "Toasted Mamon", 4, 75, 300, 300, 0, "", "2026-08-18 13:30", "completed", "e-wallet", "2026-08-18 13:30"];
+transactions[transactions.length] = ["TRX-018", "ONS-009", "", "onsite", "Grace Tan", "Taisan Mocha Cake", 2, 190, 380, 400, 20, "", "2026-08-20 15:10", "completed", "cash", "2026-08-20 15:10"];
+transactions[transactions.length] = ["TRX-019", "ONS-010", "", "onsite", "Henry Uy", "Carrot Bars", 1, 250, 250, 250, 0, "", "2026-08-27 11:00", "void", "cash", ""];
+transactions[transactions.length] = ["TRX-020", "ONS-011", "", "onsite", "Ivy Chua", "Crinkles", 10, 20, 200, 200, 0, "", "2026-09-10 09:30", "completed", "cash", "2026-09-10 09:30"];
+transactions[transactions.length] = ["TRX-021", "ONL-007", "", "online", "Jake Ong", "Taisan Ube Cake", 3, 190, 570, 570, 0, "", "2026-09-15 17:05", "completed", "e-wallet", "2026-09-15 17:05"];
+transactions[transactions.length] = ["TRX-022", "ONS-RSV-003", "RES-022", "onsite", "Karen Lim", "Brownies", 2, 250, 500, 500, 0, "2026-09-20", "2026-09-14 10:00", "completed", "cash", "2026-09-20 14:00"];
+transactions[transactions.length] = ["TRX-023", "ONL-008", "", "online", "Leo Sy", "Crema de Fruta", 1, 900, 900, 900, 0, "", "2026-09-25 12:40", "completed", "e-wallet", "2026-09-25 12:40"];
+transactions[transactions.length] = ["TRX-024", "ONL-009", "", "online", "Sofia Cruz", "Carrot Bars", 1, 250, 250, 250, 0, "", "2026-09-27 15:30", "completed", "e-wallet", "2026-09-27 15:30"];
+transactions[transactions.length] = ["TRX-025", "ONS-012", "", "onsite", "Juan Dela Cruz", "Brownies", 2, 250, 500, 500, 0, "", "2026-09-28 08:30", "completed", "cash", "2026-09-28 08:30"];
+transactions[transactions.length] = ["TRX-026", "ONS-013", "", "onsite", "Maria Santos", "Crinkles", 5, 20, 100, 200, 100, "", "2026-09-28 09:15", "pending", "cash", ""];
+transactions[transactions.length] = ["TRX-027", "ONS-RSV-004", "RES-027", "onsite", "Ana Garcia", "Crema de Fruta", 1, 900, 900, 900, 0, "2026-09-30", "2026-09-28 09:40", "pending", "cash", ""];
+transactions[transactions.length] = ["TRX-028", "ONL-010", "", "online", "Mark Lopez", "Taisan Ube Cake", 2, 190, 380, 380, 0, "", "2026-09-28 10:00", "completed", "e-wallet", "2026-09-28 10:00"];
+transactions[transactions.length] = ["TRX-029", "ONL-RSV-002", "RES-029", "online", "Pedro Reyes", "Taisan Mocha Cake", 1, 190, 190, 190, 0, "2026-10-02", "2026-09-28 10:20", "pending", "e-wallet", ""];
+transactions[transactions.length] = ["TRX-030", "ONS-014", "", "onsite", "Teresa Bautista", "Crinkles", 30, 20, 600, 600, 0, "", "2024-03-10 09:20", "completed", "cash", "2024-03-10 09:20"];
+transactions[transactions.length] = ["TRX-031", "ONL-011", "", "online", "Victor Domingo", "Taisan Classic Cake", 4, 170, 680, 680, 0, "", "2024-06-22 15:50", "completed", "e-wallet", "2024-06-22 15:50"];
+transactions[transactions.length] = ["TRX-032", "ONS-015", "", "onsite", "Cristina Ferrer", "Toasted Mamon", 10, 75, 750, 750, 0, "", "2024-11-05 10:40", "completed", "cash", "2024-11-05 10:40"];
+transactions[transactions.length] = ["TRX-033", "ONS-RSV-016", "RES-033", "onsite", "Bianca Reyes", "Custom Cake - 8 inches - White Chiffon - Premium Design", 1, 1830, 1830, 1830, 0, "2026-10-05", "2026-10-01 09:00", "completed", "cash", "2026-10-01 09:30"];
+transactions[transactions.length] = ["TRX-034", "ONS-016", "", "onsite", "Noah Garcia", "Custom Cake - 6 inches - Chocolate - Standard Design", 1, 1100, 1100, 1100, 0, "", "2026-10-01 10:15", "completed", "cash", "2026-10-01 10:20"];
+transactions[transactions.length] = ["TRX-035", "ONS-RSV-017", "RES-035", "onsite", "Mia Santos", "Custom Cake - 8 inches - Mango - Standard Design", 1, 1500, 1500, 750, 0, "2026-10-08", "2026-10-01 11:00", "pending", "cash", ""];
+transactions[transactions.length] = ["TRX-036", "ONL-012", "", "online", "Ethan Cruz", "Custom Cake - 6 inches - White Chiffon - Premium Design", 1, 1530, 1530, 1530, 0, "", "2026-10-01 13:10", "completed", "e-wallet", "2026-10-01 13:20"];
+transactions[transactions.length] = ["TRX-037", "ONS-RSV-018", "RES-037", "onsite", "Ava Mendoza", "Custom Cake - 10 inches - Red Velvet - Simple Design", 1, 1500, 1500, 750, 0, "2026-10-10", "2026-10-01 14:00", "pending", "cash", ""];
+
+/* ----- report script below ----- */
+
+/* =====================================================
+   SALES REPORT MODULE
+   - Data: the shared "transactions" array (transactions-data.js)
+   - Arrays only: no classes/objects, no built-in array methods
+     (no push, filter, reduce, find, sort, forEach, map, join...)
+   - A sale is counted on the day it was COMPLETED (F_DONE),
+     not the day the order was created or picked up.
+===================================================== */
+
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
+                     "July", "August", "September", "October", "November", "December"];
+const METHOD_LABELS = ["Cash", "E-Wallet"];
+const CHANNEL_LABELS = ["Onsite", "Online"];
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function pad(number, length) {
+    let text = "" + number;
+    while (text.length < length) {
+        text = "0" + text;
+    }
+    return text;
+}
+
+function formatCurrency(amount) {
+    return "₱" + amount.toFixed(2);
+}
+
+function todayString() {
+    const now = Date();
+    const monthName = now.substring(4, 7);
+    let month = 1;
+    if (monthName === "Feb") month = 2;
+    else if (monthName === "Mar") month = 3;
+    else if (monthName === "Apr") month = 4;
+    else if (monthName === "May") month = 5;
+    else if (monthName === "Jun") month = 6;
+    else if (monthName === "Jul") month = 7;
+    else if (monthName === "Aug") month = 8;
+    else if (monthName === "Sep") month = 9;
+    else if (monthName === "Oct") month = 10;
+    else if (monthName === "Nov") month = 11;
+    else if (monthName === "Dec") month = 12;
+    return now.substring(11, 15) + "-" + pad(month, 2) + "-" + now.substring(8, 10);
+}
+
+function escapeHtml(text) {
+    let out = "";
+    for (let i = 0; i < text.length; i++) {
+        const c = text.charAt(i);
+        if (c === "&") out += "&amp;";
+        else if (c === "<") out += "&lt;";
+        else if (c === ">") out += "&gt;";
+        else if (c === '"') out += "&quot;";
+        else if (c === "'") out += "&#39;";
+        else out += c;
+    }
+    return out;
+}
+
+function showMessage(message) {
+    $("message").textContent = message;
+    $("message").className = "message error";
+}
+
+function hideMessage() {
+    $("message").className = "message";
+}
+
+function methodIndex(method) {
+    if (method === "e-wallet") {
+        return 1;
+    }
+    return 0;
+}
+
+function channelIndex(type) {
+    if (type === "online") {
+        return 1;
+    }
+    return 0;
+}
+
+/* Closes a data-integrity gap: if a record is ever marked
+   "completed" without a completion time being set, fall back
+   to its created time instead of silently disappearing from
+   every report. */
+function effectiveDate(r) {
+    if (r[F_DONE] !== "") {
+        return r[F_DONE];
+    }
+    return r[F_TIME];
+}
+
+/* =====================================================
+   MODULE 1: PERIOD SELECTION
+   Daily = date input, Monthly = month input, Yearly = a list of
+   years that really exist in the data (no typing, so no invalid
+   characters such as the letter "e").
+===================================================== */
+
+function collectYears() {
+    const years = [];
+
+    for (let i = 0; i < transactions.length; i++) {
+        if (transactions[i][F_STATUS] !== "completed") {
+            continue;
+        }
+
+        const year = effectiveDate(transactions[i]).substring(0, 4);
+        let found = false;
+        for (let j = 0; j < years.length; j++) {
+            if (years[j] === year) {
+                found = true;
+                break;
+            }
+        }
+        if (found === false) {
+            years[years.length] = year;
+        }
+    }
+
+    /* Bubble sort, oldest year first */
+    for (let a = 0; a < years.length - 1; a++) {
+        for (let b = 0; b < years.length - 1 - a; b++) {
+            if (years[b] > years[b + 1]) {
+                const temp = years[b];
+                years[b] = years[b + 1];
+                years[b + 1] = temp;
+            }
+        }
+    }
+    return years;
+}
+
+function setupInputs() {
+    const today = todayString();
+
+    $("report-date").max = today;
+    $("report-date").value = today;
+    $("report-month").max = today.substring(0, 7);
+    $("report-month").value = today.substring(0, 7);
+
+    const years = collectYears();
+    let options = "";
+    for (let i = 0; i < years.length; i++) {
+        options += '<option value="' + years[i] + '">' + years[i] + "</option>";
+    }
+    if (options === "") {
+        options = '<option value="">No data</option>';
+    }
+    $("report-year").innerHTML = options;
+    if (years.length > 0) {
+        $("report-year").value = years[years.length - 1];
+    }
+}
+
+function changeReportInput() {
+    const type = $("report-type").value;
+    $("group-daily").hidden = (type !== "daily");
+    $("group-monthly").hidden = (type !== "monthly");
+    $("group-yearly").hidden = (type !== "yearly");
+}
+
+function getSelectedPeriod(type) {
+    if (type === "daily") {
+        return $("report-date").value;
+    }
+    if (type === "monthly") {
+        return $("report-month").value;
+    }
+    return $("report-year").value;
+}
+
+function createReportPeriodText(type, period) {
+    if (type === "daily") {
+        const day = Number(period.substring(8, 10));
+        const month = Number(period.substring(5, 7));
+        return "Daily Report: " + MONTH_NAMES[month - 1] + " " + day + ", " + period.substring(0, 4);
+    }
+    if (type === "monthly") {
+        const month = Number(period.substring(5, 7));
+        return "Monthly Report: " + MONTH_NAMES[month - 1] + " " + period.substring(0, 4);
+    }
+    return "Yearly Report: " + period;
+}
+
+/* =====================================================
+   MODULE 2: SALES AGGREGATION (LINEAR TRAVERSAL)
+   One pass over the array. A record counts when it is completed
+   and its completion time starts with the selected period
+   (YYYY-MM-DD, YYYY-MM, or YYYY).
+===================================================== */
+
+function addToProductSummary(summary, name, quantity, total) {
+    for (let i = 0; i < summary.length; i++) {
+        if (summary[i][0] === name) {
+            summary[i][1] = summary[i][1] + quantity;
+            summary[i][2] = summary[i][2] + total;
+            return;
+        }
+    }
+    summary[summary.length] = [name, quantity, total];
+}
+
+function detailRow(r) {
+    return "<tr><td>" + r[F_TRX] + "</td><td>" + escapeHtml(r[F_ORDER]) + "</td><td>" +
+           CHANNEL_LABELS[channelIndex(r[F_TYPE])] + "</td><td>" + escapeHtml(r[F_CUST]) + "</td><td>" +
+           escapeHtml(r[F_PROD]) + "</td><td>" + r[F_QTY] + "</td><td>" + formatCurrency(r[F_TOTAL]) + "</td><td>" +
+           METHOD_LABELS[methodIndex(r[F_METHOD])] + "</td><td>" + effectiveDate(r) + "</td></tr>";
+}
+
+function daysInMonth(year, month) {
+    if (month === 2) {
+        if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
+            return 29;
+        }
+        return 28;
+    }
+    if (month === 4 || month === 6 || month === 9 || month === 11) {
+        return 30;
+    }
+    return 31;
+}
+
+function previousPeriod(type, period) {
+    if (type === "yearly") {
+        return "" + (Number(period) - 1);
+    }
+
+    if (type === "monthly") {
+        let year = Number(period.substring(0, 4));
+        let month = Number(period.substring(5, 7)) - 1;
+        if (month === 0) {
+            month = 12;
+            year = year - 1;
+        }
+        return year + "-" + pad(month, 2);
+    }
+
+    let year = Number(period.substring(0, 4));
+    let month = Number(period.substring(5, 7));
+    let day = Number(period.substring(8, 10));
+    if (day > 1) {
+        day = day - 1;
+    } else {
+        month = month - 1;
+        if (month === 0) {
+            month = 12;
+            year = year - 1;
+        }
+        day = daysInMonth(year, month);
+    }
+    return year + "-" + pad(month, 2) + "-" + pad(day, 2);
+}
+
+function completedPeriodSummary(period) {
+    let sales = 0;
+    let quantity = 0;
+    let count = 0;
+    for (let i = 0; i < transactions.length; i++) {
+        if (transactions[i][F_STATUS] === "completed" && effectiveDate(transactions[i]).substring(0, period.length) === period) {
+            sales = sales + transactions[i][F_TOTAL];
+            quantity = quantity + transactions[i][F_QTY];
+            count = count + 1;
+        }
+    }
+    return [sales, quantity, count];
+}
+
+function displayOperations(completedCount, pendingCount, voidCount, reservationCount, reservationSales,
+                           paidCount, balanceCount, peakCounts, totalSales, type, period) {
+    const totalStatusCount = completedCount + pendingCount + voidCount;
+    let completionRate = "0.0%";
+    if (totalStatusCount > 0) {
+        completionRate = (completedCount / totalStatusCount * 100).toFixed(1) + "%";
+    }
+
+    let peakIndex = 0;
+    for (let i = 1; i < peakCounts.length; i++) {
+        if (peakCounts[i] > peakCounts[peakIndex]) {
+            peakIndex = i;
+        }
+    }
+    const peakLabels = ["Morning", "Afternoon", "Evening"];
+    let peakText = "No data";
+    if (completedCount > 0) {
+        peakText = peakLabels[peakIndex] + " (" + peakCounts[peakIndex] + " orders)";
+    }
+
+    const prior = completedPeriodSummary(previousPeriod(type, period));
+    let changeText = "No previous data";
+    if (prior[0] > 0) {
+        const change = (totalSales - prior[0]) / prior[0] * 100;
+        if (change >= 0) {
+            changeText = "+" + change.toFixed(1) + "% vs previous";
+        } else {
+            changeText = change.toFixed(1) + "% vs previous";
+        }
+    }
+
+    $("operations-period").textContent = createReportPeriodText(type, period);
+    $("status-completed").textContent = completedCount;
+    $("status-pending").textContent = pendingCount;
+    $("status-void").textContent = voidCount;
+    $("completion-rate").textContent = completionRate;
+    $("reservation-count").textContent = reservationCount;
+    $("reservation-sales").textContent = formatCurrency(reservationSales);
+    $("paid-count").textContent = paidCount;
+    $("balance-count").textContent = balanceCount;
+    $("peak-period").textContent = peakText;
+    $("period-change").textContent = changeText;
+}
+
+function displayBusinessAssessment(totalSales, transactionCount, averageSale, pendingCount, voidCount,
+                                   channelCount, methodCount, type, period) {
+    let leadingChannel = 0;
+    if (channelCount[1] > channelCount[0]) {
+        leadingChannel = 1;
+    }
+    let leadingMethod = 0;
+    if (methodCount[1] > methodCount[0]) {
+        leadingMethod = 1;
+    }
+
+    const prior = completedPeriodSummary(previousPeriod(type, period));
+    let trendText = "There is no previous-period baseline yet.";
+    if (prior[0] > 0) {
+        const change = (totalSales - prior[0]) / prior[0] * 100;
+        if (change >= 0) {
+            trendText = "Sales are up " + change.toFixed(1) + "% compared with the previous period.";
+        } else {
+            trendText = "Sales are down " + (change * -1).toFixed(1) + "% compared with the previous period.";
+        }
+    }
+
+    let leadText = "No completed sales were recorded for this period.";
+    if (transactionCount > 0) {
+        leadText = formatCurrency(totalSales) + " revenue\n" +
+            transactionCount + " completed order" + (transactionCount === 1 ? "" : "s") +
+            " | Average order: " + formatCurrency(averageSale) + "\n" +
+            trendText + "\n" +
+            "Top channel: " + CHANNEL_LABELS[leadingChannel] +
+            " | Most-used payment: " + METHOD_LABELS[leadingMethod];
+    } else {
+        leadText = "No completed sales were recorded for this period.\nPending and voided orders are excluded from revenue.";
+    }
+
+    let actionText = "Continue monitoring completed sales and customer demand.";
+    if (pendingCount > 0 && voidCount > 0) {
+        actionText = "Follow up " + pendingCount + " pending order" + (pendingCount === 1 ? "" : "s") +
+            " and review the reason for " + voidCount + " voided order" + (voidCount === 1 ? "" : "s") + ".";
+    } else if (pendingCount > 0) {
+        actionText = "Follow up " + pendingCount + " pending order" + (pendingCount === 1 ? "" : "s") + " before the promised date.";
+    } else if (voidCount > 0) {
+        actionText = "Review the " + voidCount + " voided order" + (voidCount === 1 ? "" : "s") + " to identify preventable losses.";
+    }
+
+    $("assessment-lead").textContent = leadText;
+    $("assessment-actions").textContent = actionText;
+}
+
+function generateSalesReport() {
+    const type = $("report-type").value;
+    const period = getSelectedPeriod(type);
+
+    if (period === "") {
+        showMessage("Please select a reporting period.");
+        return;
+    }
+    hideMessage();
+
+    let transactionCount = 0;
+    let quantitySold = 0;
+    let totalSales = 0;
+    let rows = "";
+
+    const productSummary = [];          /* each entry: [name, quantity, sales] */
+    const methodCount = [0, 0];         /* Cash, E-Wallet */
+    const methodSales = [0, 0];
+    const channelCount = [0, 0];        /* Onsite, Online */
+    const channelSales = [0, 0];
+
+    let excludedPending = 0;
+    let excludedVoid = 0;
+    let completedCount = 0;
+    let pendingCount = 0;
+    let voidCount = 0;
+    let reservationCount = 0;
+    let reservationSales = 0;
+    let paidCount = 0;
+    let balanceCount = 0;
+    const peakCounts = [0, 0, 0];
+
+    for (let i = 0; i < transactions.length; i++) {
+        const r = transactions[i];
+
+        if (r[F_STATUS] === "pending" || r[F_STATUS] === "void") {
+            /* Excluded from sales; counted separately using the order date,
+               since a pending or voided record was never completed. */
+            if (r[F_TIME].substring(0, period.length) === period) {
+                if (r[F_STATUS] === "pending") {
+                    excludedPending = excludedPending + 1;
+                    pendingCount = pendingCount + 1;
+                } else {
+                    excludedVoid = excludedVoid + 1;
+                    voidCount = voidCount + 1;
+                }
+            }
+            continue;
+        }
+
+        if (r[F_STATUS] !== "completed") {
+            continue;
+        }
+        if (effectiveDate(r).substring(0, period.length) !== period) {
+            continue;
+        }
+
+        transactionCount = transactionCount + 1;
+        completedCount = completedCount + 1;
+        quantitySold = quantitySold + r[F_QTY];
+        totalSales = totalSales + r[F_TOTAL];
+
+        if (r[F_DATE] !== "") {
+            reservationCount = reservationCount + 1;
+            reservationSales = reservationSales + r[F_TOTAL];
+        }
+
+        if (r[F_PAY] >= r[F_TOTAL]) {
+            paidCount = paidCount + 1;
+        } else {
+            balanceCount = balanceCount + 1;
+        }
+
+        const hour = Number(effectiveDate(r).substring(11, 13));
+        if (hour < 12) {
+            peakCounts[0] = peakCounts[0] + 1;
+        } else if (hour < 17) {
+            peakCounts[1] = peakCounts[1] + 1;
+        } else {
+            peakCounts[2] = peakCounts[2] + 1;
+        }
+
+        const m = methodIndex(r[F_METHOD]);
+        methodCount[m] = methodCount[m] + 1;
+        methodSales[m] = methodSales[m] + r[F_TOTAL];
+
+        const c = channelIndex(r[F_TYPE]);
+        channelCount[c] = channelCount[c] + 1;
+        channelSales[c] = channelSales[c] + r[F_TOTAL];
+
+        addToProductSummary(productSummary, r[F_PROD], r[F_QTY], r[F_TOTAL]);
+        rows += detailRow(r);
+    }
+
+    let averageSale = 0;
+    if (transactionCount > 0) {
+        averageSale = totalSales / transactionCount;
+    }
+
+    $("total-sales").textContent = formatCurrency(totalSales);
+    $("transaction-count").textContent = transactionCount;
+    $("quantity-sold").textContent = quantitySold;
+    $("average-sale").textContent = formatCurrency(averageSale);
+
+    const periodText = createReportPeriodText(type, period);
+    $("report-period").textContent = periodText;
+    $("transaction-period").textContent = periodText;
+    $("breakdown-period").textContent = periodText;
+
+    if (rows === "") {
+        rows = '<tr><td colspan="9" class="empty-message">No completed transactions found for the selected period.</td></tr>';
+    }
+    $("report-table").innerHTML = rows;
+
+    sortProductSummary(productSummary);
+    displayProductSummary(productSummary);
+    displayTopProduct(productSummary);
+    displayBreakdown("method-table", METHOD_LABELS, methodCount, methodSales, totalSales);
+    displayBreakdown("channel-table", CHANNEL_LABELS, channelCount, channelSales, totalSales);
+    displayExcluded(excludedPending, excludedVoid);
+    displayOperations(completedCount, pendingCount, voidCount, reservationCount, reservationSales,
+        paidCount, balanceCount, peakCounts, totalSales, type, period);
+    displayBusinessAssessment(totalSales, transactionCount, averageSale, pendingCount, voidCount,
+        channelCount, methodCount, type, period);
+}
+
+function displayExcluded(pendingCount, voidCount) {
+    const box = $("excluded-note");
+    if (pendingCount === 0 && voidCount === 0) {
+        box.hidden = true;
+        box.textContent = "";
+        return;
+    }
+    box.hidden = false;
+    box.textContent = "Not included in the totals above: " + pendingCount +
+        " pending order(s) and " + voidCount + " voided order(s) placed in this period.";
+}
+
+/* =====================================================
+   MODULE 3: PRODUCT RANKING (SELECTION SORT)
+   Highest quantity first; equal quantity -> higher sales first.
+   Ties for first place are all shown as top-selling.
+===================================================== */
+
+function sortProductSummary(summary) {
+    for (let i = 0; i < summary.length - 1; i++) {
+        let best = i;
+        for (let j = i + 1; j < summary.length; j++) {
+            if (summary[j][1] > summary[best][1] ||
+                (summary[j][1] === summary[best][1] && summary[j][2] > summary[best][2])) {
+                best = j;
+            }
+        }
+        if (best !== i) {
+            const temp = summary[i];
+            summary[i] = summary[best];
+            summary[best] = temp;
+        }
+    }
+}
+
+function displayTopProduct(summary) {
+    if (summary.length === 0) {
+        $("top-product-name").textContent = "No data";
+        $("top-product-value").textContent = "No sales data available.";
+        return;
+    }
+
+    const topQuantity = summary[0][1];
+    let tieCount = 0;
+
+    for (let i = 0; i < summary.length; i++) {
+        if (summary[i][1] !== topQuantity) {
+            break;
+        }
+        tieCount = tieCount + 1;
+    }
+
+    if (tieCount > 1) {
+        $("top-product-name").textContent = tieCount + " products tied";
+        $("top-product-value").textContent = topQuantity + " item" + (topQuantity === 1 ? "" : "s") +
+            " sold each. See the ranking table for product details.";
+    } else {
+        let productName = summary[0][0];
+        if (productName.length > 32) {
+            productName = productName.substring(0, 29) + "...";
+        }
+        $("top-product-name").textContent = productName;
+        $("top-product-value").textContent = topQuantity + " item" + (topQuantity === 1 ? "" : "s") +
+            " sold | " + formatCurrency(summary[0][2]) + " sales";
+    }
+}
+
+/* =====================================================
+   MODULE 4: REPORT DISPLAY
+===================================================== */
+
+function displayProductSummary(summary) {
+    let rows = "";
+    for (let i = 0; i < summary.length; i++) {
+        rows += "<tr><td>" + (i + 1) + "</td><td>" + escapeHtml(summary[i][0]) + "</td><td>" +
+                summary[i][1] + "</td><td>" + formatCurrency(summary[i][2]) + "</td></tr>";
+    }
+    if (rows === "") {
+        rows = '<tr><td colspan="4" class="empty-message">No product sales data available.</td></tr>';
+    }
+    $("product-table").innerHTML = rows;
+}
+
+function displayBreakdown(bodyId, labels, counts, sales, totalSales) {
+    let rows = "";
+    for (let i = 0; i < labels.length; i++) {
+        let share = "0.0%";
+        if (totalSales > 0) {
+            share = (sales[i] / totalSales * 100).toFixed(1) + "%";
+        }
+        rows += "<tr><td>" + labels[i] + "</td><td>" + counts[i] + "</td><td>" +
+                formatCurrency(sales[i]) + "</td><td>" + share + "</td></tr>";
+    }
+    $(bodyId).innerHTML = rows;
+}
+
+
+
+/* =====================================================
+   START
+===================================================== */
+
+setupInputs();
+changeReportInput();
+generateSalesReport();
+
+</script>
+</body>
+</html> 
